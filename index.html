@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Super Simple Website - Login</title>
+    <!-- Link to Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link to Font Awesome CSS (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: white;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            margin-top: 100px;
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Style the warning message */
+        .alert-warning {
+            margin-top: 20px;
+            text-align: center; /* Center the warning message text */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
+    <div class="alert alert-warning" id="warningMessage" style="display: none;">
+        <strong>Invalid username or password.</strong> Please try again.
+    </div>
+    <!-- Link to Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript to handle form submission and show/hide password -->
+    <script>
+        // Function to handle form submission
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Check if the username and password are correct
+            if (username === 'Dalle' && password === 'bob121') {
+                // If the login is successful, redirect to the main page
+                window.location.href = 'main.html';
+            } else {
+                // If the login fails, display the warning message
+                document.getElementById('warningMessage').style.display = 'block';
+            }
+        }
+
+        // Add an event listener to the form submission
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', handleLogin);
+
+        // Function to toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+
+        // Add an event listener to the toggle password button
+        const togglePasswordButton = document.getElementById('togglePassword');
+        togglePasswordButton.addEventListener('click', togglePasswordVisibility);
+    </script>
+</body>
+</html>

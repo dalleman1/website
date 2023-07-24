@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Super Simple Website - Main Page</title>
+    <!-- Link to Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link to Font Awesome CSS (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: lightgoldenrodyellow;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
+            height: 100vh;
+        }
+        .nav-bar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 60px;
+            height: 100%;
+            background-color: #007bff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between; /* Align content with space between elements */
+            padding-top: 20px;
+        }
+        .home-icon {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .exit-button {
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .status-bar {
+            padding: 10px 20px;
+            font-size: 24px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            background-color: red;
+        }
+        .status-label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .json-output {
+            background-color: white;
+            border: 2px solid black;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            position: relative; /* Keep position relative */
+            height: 600px; /* Add a fixed height */
+            overflow: auto; /* Add overflow property to auto to enable scrolling when necessary */
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 20px;
+            height: 20px;
+            animation: spin 2s linear infinite;
+            margin-left: 10px; /* Add this line */
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 16px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .api-section {
+            display: flex;
+            align-items: center;
+            margin-top: 80px;
+        }
+        .api-url {
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .api-dropdown {
+            font-size: 16px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            flex: 1;
+        }
+
+        .api-input {
+            font-size: 16px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            flex: 1;
+            margin: 10px;
+        }
+
+        .execute-button {
+            font-size: 16px;
+            padding: 5px 10px;
+            margin-left: 10px;
+            background-color: green; /* Change button color to green */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation bar -->
+    <div class="nav-bar">
+        <a class="home-icon" href="main.html">
+            <i class="fas fa-home"></i>
+        </a>
+        <div class="exit-button" onclick="goToLoginPage()">
+            <i class="fas fa-door-open"></i>
+        </div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-label">API is:</div>
+    <div class="status-bar" id="statusBar">Offline</div>
+
+
+    <!-- API section -->
+    <div class="api-section">
+        <div class="api-url">https://localhost:7098/api/Algorithm/</div>
+        <input type="text" class="api-input" id="numberInput" placeholder="Enter number">
+        <input type="text" class="api-input" id="mInput" placeholder="Enter M">
+        <button class="execute-button" onclick="executeApiCall()">GET</button>
+        <div id="loader" class="loader" style="display: none;"></div>
+    </div>
+
+    <!-- JSON output square -->
+    <div class="json-output" id="jsonOutput">
+        <!-- JSON data will be dynamically added here -->
+        <pre id="jsonOutputPre"></pre>
+        <!-- Copy JSON button -->
+        <div>
+            <button class="copy-button" id="copyButton" onclick="copyJsonOutput()" style="display: none;">Copy JSON</button><br>
+            <span id="copyMessage" style="display:none; color: green;">Copied!</span>
+        </div>
+
+    </div>
+
+
+
+
+    <!-- Link to Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript to handle exit button functionality and API execution -->
+    <script>   
+        document.addEventListener("DOMContentLoaded", function() {
+    
+            function goToLoginPage() {
+                // Replace "login.html" with the actual URL of your login page
+                window.location.href = "login.html";
+            }
+    
+    
+            // Sample JSON data (replace this with your actual JSON data)
+            const jsonData = { };
+    
+            // Function to display JSON data in the output square
+            function displayJsonOutput(data) {
+                if (Object.keys(data).length !== 0) { // Check if data is not empty
+                    document.getElementById("jsonOutputPre").innerText = JSON.stringify(data, null, 2);
+                    // Show the copy button
+                    document.getElementById("copyButton").style.display = "block";
+                } else {
+                    document.getElementById("jsonOutputPre").innerText = ""; // Empty string if data is empty
+                    // Hide the copy button
+                    document.getElementById("copyButton").style.display = "none";
+                }
+            }
+    
+            // Call the function to display JSON data in the output square
+            displayJsonOutput(jsonData);
+    
+            // Function to copy JSON data to clipboard
+            function copyJsonOutput() {
+                const jsonOutput = document.getElementById("jsonOutput");
+                const range = document.createRange();
+                range.selectNode(jsonOutput);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                document.execCommand("copy");
+                window.getSelection().removeAllRanges();
+
+                // Show a feedback message (you can customize this part)
+                const copyMessage = document.getElementById("copyMessage");
+                copyMessage.style.display = "inline";
+
+                // After 3 seconds, hide the message
+                setTimeout(() => {
+                    copyMessage.style.display = "none";
+                }, 3000);
+            }
+
+            // Assign the function to a global variable
+            window.copyJsonOutput = copyJsonOutput;
+    
+            // Function to execute API call when the "GET" button is clicked
+            function executeApiCall() {
+                const number = document.getElementById('numberInput').value;
+                const M = document.getElementById('mInput').value;
+
+                const apiURL = `https://localhost:7098/api/Algorithm/${number}/${M}`;
+
+                // Hide the copy button
+                document.getElementById("copyButton").style.display = "none";
+
+                // Show the loader
+                document.getElementById("loader").style.display = "block";
+
+                // Wait for 1 second before sending the API request
+                setTimeout(() => {
+                    fetch(apiURL)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Hide the loader
+                            document.getElementById("loader").style.display = "none";
+                            displayJsonOutput(data);
+                        })
+                        .catch((error) => {
+                            // Hide the loader
+                            document.getElementById("loader").style.display = "none";
+                            console.error('Error:', error);
+                        });
+                }, 1000);
+            }
+
+
+
+            // Assign the function to a global variable
+            window.executeApiCall = executeApiCall;
+    
+            // Fetch status from API health endpoint
+            function fetchStatus() {
+                fetch('https://localhost:7098/api/health')
+                .then(response => {
+                    // Update the status bar if a 200 OK response is received
+                    if (response.status === 200) {
+                        const statusBar = document.getElementById('statusBar');
+                        statusBar.textContent = 'Online';
+                        statusBar.style.backgroundColor = 'green';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+            // Call fetchStatus() when the page loads
+            fetchStatus();
+    
+        });        
+    </script>    
+</body>
+</html>
